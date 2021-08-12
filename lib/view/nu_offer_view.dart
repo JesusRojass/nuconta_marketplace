@@ -21,15 +21,108 @@ class _NuOfferViewState extends State<NuOfferView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Text("Offer"),
+      body: FutureBuilder<RootOfferTree>(
+        future: _getFutureOfferData(),
+        builder: (BuildContext context, AsyncSnapshot<RootOfferTree> snapshot) {
+          List<Widget> children;
+          if (snapshot.hasData) {
+            children = <Widget>[
+              Expanded(
+                child: ListView.builder(
+                    itemCount: snapshot.data!.offers.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Padding(
+                        padding: EdgeInsets.only(left: 10, right: 10, top: 10),
+                        child: Container(
+                          height: 200,
+                          child: Card(
+                            elevation: 10,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(left: 20, right: 10),
+                                  child: CircleAvatar(
+                                    radius: 50,
+                                    backgroundImage: NetworkImage(snapshot
+                                        .data!.offers[index].product.image),
+                                  ),
+                                ),
+                                Container(
+                                  height: 150,
+                                  width: 180,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        snapshot
+                                            .data!.offers[index].product.name,
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                      Padding(
+                                          padding: EdgeInsets.only(bottom: 10)),
+                                      Text(
+                                        snapshot.data!.offers[index].product
+                                            .description,
+                                        style: TextStyle(fontSize: 14),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                      Padding(
+                                          padding: EdgeInsets.only(bottom: 10)),
+                                      Text(
+                                        '\$' +
+                                            snapshot.data!.offers[index].price
+                                                .toString(),
+                                        style: TextStyle(
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+              ),
+            ];
+          } else {
+            children = const <Widget>[
+              SizedBox(
+                child: CircularProgressIndicator(),
+                width: 60,
+                height: 60,
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 16),
+                child: Text('Loading...'),
+              )
+            ];
+          }
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: children,
+            ),
+          );
+        },
       ),
     );
   }
 
-  Future<void> _getFutureOfferData() async {
+  Future<RootOfferTree> _getFutureOfferData() async {
     setState(() {
       initializeGQL().then((client) => {_offerData = fetchOfferData(client)});
     });
+    return _offerData;
   }
 }

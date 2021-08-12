@@ -33,7 +33,7 @@ class _NuProfileViewState extends State<NuProfileView> {
                     if (snapshot.hasData) {
                       children = <Widget>[
                         Padding(
-                          padding: EdgeInsets.all(20),
+                          padding: EdgeInsets.all(10),
                           child: Card(
                             elevation: 10,
                             child: Column(

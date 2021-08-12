@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:nuconta_marketplace/controller/offer_controler.dart';
 import 'package:nuconta_marketplace/controller/profile_data.dart';
+import 'package:nuconta_marketplace/model/offer_data.dart';
 import 'package:nuconta_marketplace/model/user_data.dart';
 import 'package:nuconta_marketplace/utils/graph_ql_utils.dart';
 
@@ -10,10 +12,14 @@ class NuMarketView extends StatefulWidget {
 
 class _NuMarketViewState extends State<NuMarketView> {
   late Future<User> _userData;
+  late Future<RootOfferTree> _offerData;
   @override
   void initState() {
     super.initState();
     _getFutureData().whenComplete(() {
+      setState(() {});
+    });
+    _getFutureOfferData().whenComplete(() {
       setState(() {});
     });
   }
@@ -24,6 +30,7 @@ class _NuMarketViewState extends State<NuMarketView> {
       body: Container(
         child: SingleChildScrollView(
           child: Column(
+            mainAxisSize: MainAxisSize.max,
             children: [
               Container(
                 alignment: Alignment.centerLeft,
@@ -43,7 +50,7 @@ class _NuMarketViewState extends State<NuMarketView> {
                     if (snapshot.hasData) {
                       children = <Widget>[
                         Padding(
-                          padding: EdgeInsets.all(20),
+                          padding: EdgeInsets.all(10),
                           child: Card(
                             elevation: 10,
                             child: Column(
@@ -139,6 +146,116 @@ class _NuMarketViewState extends State<NuMarketView> {
                   ),
                 ),
               ),
+              Container(
+                height: 500,
+                child: FutureBuilder<RootOfferTree>(
+                  future: _getFutureOfferData(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<RootOfferTree> snapshot) {
+                    List<Widget> children;
+                    if (snapshot.hasData) {
+                      children = <Widget>[
+                        Expanded(
+                          child: ListView.builder(
+                              itemCount: snapshot.data!.offers.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 10, right: 10, top: 10),
+                                  child: Container(
+                                    height: 200,
+                                    child: Card(
+                                      elevation: 10,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                left: 20, right: 10),
+                                            child: CircleAvatar(
+                                              radius: 50,
+                                              backgroundImage: NetworkImage(
+                                                  snapshot.data!.offers[index]
+                                                      .product.image),
+                                            ),
+                                          ),
+                                          Container(
+                                            height: 150,
+                                            width: 180,
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  snapshot.data!.offers[index]
+                                                      .product.name,
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                  textAlign: TextAlign.left,
+                                                ),
+                                                Padding(
+                                                    padding: EdgeInsets.only(
+                                                        bottom: 10)),
+                                                Text(
+                                                  snapshot.data!.offers[index]
+                                                      .product.description,
+                                                  style:
+                                                      TextStyle(fontSize: 14),
+                                                  textAlign: TextAlign.left,
+                                                ),
+                                                Padding(
+                                                    padding: EdgeInsets.only(
+                                                        bottom: 10)),
+                                                Text(
+                                                  '\$' +
+                                                      snapshot.data!
+                                                          .offers[index].price
+                                                          .toString(),
+                                                  style: TextStyle(
+                                                      fontSize: 17,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                  textAlign: TextAlign.left,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }),
+                        ),
+                      ];
+                    } else {
+                      children = const <Widget>[
+                        SizedBox(
+                          child: CircularProgressIndicator(),
+                          width: 60,
+                          height: 60,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 16),
+                          child: Text('Loading...'),
+                        )
+                      ];
+                    }
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: children,
+                      ),
+                    );
+                  },
+                ),
+              )
             ],
           ),
         ),
@@ -151,5 +268,12 @@ class _NuMarketViewState extends State<NuMarketView> {
       initializeGQL().then((client) => {_userData = fetchUserData(client)});
     });
     return _userData;
+  }
+
+  Future<RootOfferTree> _getFutureOfferData() async {
+    setState(() {
+      initializeGQL().then((client) => {_offerData = fetchOfferData(client)});
+    });
+    return _offerData;
   }
 }
