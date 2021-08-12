@@ -15,8 +15,8 @@ class BottomMenuBarState extends State<BottomMenuBar> {
       currentIndex: widget.currentIndex,
       items: [
         BottomNavigationBarItem(
-          icon: new Icon(Icons.shop),
-          label: 'Market',
+          icon: new Icon(Icons.home),
+          label: 'Home',
         ),
         BottomNavigationBarItem(
           icon: new Icon(Icons.local_offer),
