@@ -147,7 +147,7 @@ class _NuMarketViewState extends State<NuMarketView> {
                 ),
               ),
               Container(
-                height: 500,
+                height: 345,
                 child: FutureBuilder<RootOfferTree>(
                   future: _getFutureOfferData(),
                   builder: (BuildContext context,
@@ -157,11 +157,12 @@ class _NuMarketViewState extends State<NuMarketView> {
                       children = <Widget>[
                         Expanded(
                           child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
                               itemCount: snapshot.data!.offers.length,
                               itemBuilder: (BuildContext context, int index) {
                                 return Padding(
                                   padding: EdgeInsets.only(
-                                      left: 10, right: 10, top: 10),
+                                      left: 10, right: 10, top: 5, bottom: 10),
                                   child: Container(
                                     height: 200,
                                     child: Card(
@@ -172,7 +173,7 @@ class _NuMarketViewState extends State<NuMarketView> {
                                         children: [
                                           Padding(
                                             padding: EdgeInsets.only(
-                                                left: 20, right: 10),
+                                                left: 30, right: 30),
                                             child: CircleAvatar(
                                               radius: 50,
                                               backgroundImage: NetworkImage(
@@ -211,17 +212,36 @@ class _NuMarketViewState extends State<NuMarketView> {
                                                 Padding(
                                                     padding: EdgeInsets.only(
                                                         bottom: 10)),
-                                                Text(
-                                                  '\$' +
-                                                      snapshot.data!
-                                                          .offers[index].price
-                                                          .toString(),
-                                                  style: TextStyle(
-                                                      fontSize: 17,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                  textAlign: TextAlign.left,
-                                                ),
+                                                ElevatedButton(
+                                                    child: Text(
+                                                        '\$' +
+                                                            snapshot
+                                                                .data!
+                                                                .offers[index]
+                                                                .price
+                                                                .toString(),
+                                                        style: TextStyle(
+                                                            fontSize: 14)),
+                                                    style: ButtonStyle(
+                                                      foregroundColor:
+                                                          MaterialStateProperty
+                                                              .all<Color>(
+                                                                  Colors.white),
+                                                      backgroundColor:
+                                                          MaterialStateProperty
+                                                              .all<Color>(Colors
+                                                                  .purple),
+                                                      shape: MaterialStateProperty
+                                                          .all<
+                                                              RoundedRectangleBorder>(
+                                                        RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(25),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    onPressed: () => null)
                                               ],
                                             ),
                                           ),

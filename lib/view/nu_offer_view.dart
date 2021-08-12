@@ -49,7 +49,7 @@ class _NuOfferViewState extends State<NuOfferView> {
                                   ),
                                 ),
                                 Container(
-                                  height: 150,
+                                  height: 200,
                                   width: 180,
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -74,15 +74,29 @@ class _NuOfferViewState extends State<NuOfferView> {
                                       ),
                                       Padding(
                                           padding: EdgeInsets.only(bottom: 10)),
-                                      Text(
-                                        '\$' +
-                                            snapshot.data!.offers[index].price
-                                                .toString(),
-                                        style: TextStyle(
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.bold),
-                                        textAlign: TextAlign.left,
-                                      ),
+                                      ElevatedButton(
+                                          child: Text(
+                                              '\$' +
+                                                  snapshot
+                                                      .data!.offers[index].price
+                                                      .toString(),
+                                              style: TextStyle(fontSize: 14)),
+                                          style: ButtonStyle(
+                                            foregroundColor:
+                                                MaterialStateProperty.all<
+                                                    Color>(Colors.white),
+                                            backgroundColor:
+                                                MaterialStateProperty.all<
+                                                    Color>(Colors.purple),
+                                            shape: MaterialStateProperty.all<
+                                                RoundedRectangleBorder>(
+                                              RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(25),
+                                              ),
+                                            ),
+                                          ),
+                                          onPressed: () => null)
                                     ],
                                   ),
                                 ),
