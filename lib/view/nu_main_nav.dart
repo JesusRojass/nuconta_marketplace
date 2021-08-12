@@ -14,11 +14,12 @@ class NuMainNav extends StatefulWidget {
 
 class _NuMainNavState extends State<NuMainNav> {
   int _currentIndex = 0;
+  List<String> _titles = ['Home', 'Offers', 'Profile'];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('NuConta Marketplace'),
+        title: Text(_titles[_currentIndex]),
       ),
       bottomNavigationBar: BottomMenuBar(_menuCallback, _currentIndex),
       body: SafeArea(child: _callPage(this._currentIndex)),

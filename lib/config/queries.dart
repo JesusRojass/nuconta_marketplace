@@ -15,6 +15,7 @@ class Queries {
         product{
           image
           name
+          description
         }
         price
       }
