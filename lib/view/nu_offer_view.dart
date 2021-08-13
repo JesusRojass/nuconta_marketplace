@@ -236,10 +236,96 @@ class _NuOfferViewState extends State<NuOfferView> {
     return _offerData;
   }
 
+  void _onLoading(bool pStat, String pMessage) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            height: 200,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(),
+                Padding(
+                  padding: EdgeInsets.only(top: 10),
+                  child: Text(
+                    "Purchasing...",
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+    new Future.delayed(new Duration(seconds: 2), () {
+      Navigator.pop(context);
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Dialog(
+            child: Container(
+              height: 200,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    child: pStat
+                        ? Icon(Icons.check_circle)
+                        : Icon(Icons.remove_circle),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 10, bottom: 15),
+                    child: Text(
+                      pMessage,
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  ElevatedButton(
+                    child: Text('Ok', style: TextStyle(fontSize: 18)),
+                    style: ButtonStyle(
+                      foregroundColor:
+                          MaterialStateProperty.all<Color>(Colors.white),
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.purple),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    });
+  }
+
   Future<PurchaseData> _doPurchase(String offerId) async {
     setState(() {
-      initializeGQL()
-          .then((client) => {_purchaseData = commitPurchase(client, offerId)});
+      initializeGQL().then((client) {
+        _purchaseData = commitPurchase(client, offerId);
+        _purchaseData.then((value) {
+          if (value.errorMessage == null) {
+            _onLoading(value.success, 'Purchase Complete!');
+          } else {
+            _onLoading(value.success, value.errorMessage);
+          }
+        });
+      });
     });
     return _purchaseData;
   }
