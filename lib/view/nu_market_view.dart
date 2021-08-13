@@ -175,13 +175,20 @@ class _NuMarketViewState extends State<NuMarketView> {
                                             MainAxisAlignment.start,
                                         children: [
                                           Padding(
-                                            padding: EdgeInsets.only(
-                                                left: 30, right: 30),
-                                            child: CircleAvatar(
-                                              radius: 50,
-                                              backgroundImage: NetworkImage(
-                                                  snapshot.data!.offers[index]
-                                                      .product.image),
+                                            padding: EdgeInsets.only(right: 15),
+                                            child: Container(
+                                              width: 155,
+                                              height: MediaQuery.of(context)
+                                                  .size
+                                                  .height,
+                                              child: FittedBox(
+                                                child: Image.network(snapshot
+                                                    .data!
+                                                    .offers[index]
+                                                    .product
+                                                    .image),
+                                                fit: BoxFit.fill,
+                                              ),
                                             ),
                                           ),
                                           Container(
@@ -216,40 +223,64 @@ class _NuMarketViewState extends State<NuMarketView> {
                                                     padding: EdgeInsets.only(
                                                         bottom: 10)),
                                                 ElevatedButton(
-                                                    child: Text(
-                                                        '\$' +
-                                                            snapshot
-                                                                .data!
-                                                                .offers[index]
-                                                                .price
-                                                                .toString(),
-                                                        style: TextStyle(
-                                                            fontSize: 14)),
-                                                    style: ButtonStyle(
-                                                      foregroundColor:
-                                                          MaterialStateProperty
-                                                              .all<Color>(
-                                                                  Colors.white),
-                                                      backgroundColor:
-                                                          MaterialStateProperty
-                                                              .all<Color>(Colors
-                                                                  .purple),
-                                                      shape: MaterialStateProperty
-                                                          .all<
-                                                              RoundedRectangleBorder>(
-                                                        RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(25),
-                                                        ),
+                                                  child: Text(
+                                                      '\$' +
+                                                          snapshot
+                                                              .data!
+                                                              .offers[index]
+                                                              .price
+                                                              .toString(),
+                                                      style: TextStyle(
+                                                          fontSize: 14)),
+                                                  style: ButtonStyle(
+                                                    foregroundColor:
+                                                        MaterialStateProperty
+                                                            .all<Color>(
+                                                                Colors.white),
+                                                    backgroundColor:
+                                                        MaterialStateProperty
+                                                            .all<Color>(
+                                                                Colors.purple),
+                                                    shape: MaterialStateProperty
+                                                        .all<
+                                                            RoundedRectangleBorder>(
+                                                      RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(25),
                                                       ),
                                                     ),
-                                                    onPressed: () {
-                                                      print(snapshot.data!
-                                                          .offers[index].id);
-                                                      _doPurchase(snapshot.data!
-                                                          .offers[index].id);
-                                                    })
+                                                  ),
+                                                  onPressed: () {
+                                                    print(snapshot.data!
+                                                        .offers[index].id);
+                                                    // _doPurchase(snapshot.data!
+                                                    //     .offers[index].id);
+                                                    _showModalBottomSheet(
+                                                        context,
+                                                        snapshot
+                                                            .data!
+                                                            .offers[index]
+                                                            .product
+                                                            .name,
+                                                        snapshot
+                                                            .data!
+                                                            .offers[index]
+                                                            .product
+                                                            .description,
+                                                        snapshot
+                                                            .data!
+                                                            .offers[index]
+                                                            .price,
+                                                        snapshot.data!
+                                                            .offers[index].id,
+                                                        snapshot
+                                                            .data!
+                                                            .offers[index]
+                                                            .product
+                                                            .image);
+                                                  },
+                                                )
                                               ],
                                             ),
                                           ),
@@ -288,6 +319,82 @@ class _NuMarketViewState extends State<NuMarketView> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showModalBottomSheet(BuildContext context, String pName, String pDesc,
+      int pPrice, String offId, String pImg) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return Container(
+          height: MediaQuery.of(context).size.height * .65,
+          child: SingleChildScrollView(
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 250,
+                    child: FittedBox(
+                      child: Image.network(pImg),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                  Padding(padding: EdgeInsets.only(bottom: 10)),
+                  Container(
+                    child: Padding(
+                      padding: EdgeInsets.all(25),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            pName,
+                            style: TextStyle(
+                                fontSize: 22, fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.left,
+                          ),
+                          Padding(padding: EdgeInsets.only(bottom: 10)),
+                          Text(
+                            pDesc,
+                            style: TextStyle(fontSize: 20),
+                            textAlign: TextAlign.left,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(25),
+                    child: ElevatedButton(
+                      child: Text('\$' + pPrice.toString(),
+                          style: TextStyle(fontSize: 24)),
+                      style: ButtonStyle(
+                        foregroundColor:
+                            MaterialStateProperty.all<Color>(Colors.white),
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Colors.purple),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                        ),
+                      ),
+                      onPressed: () {
+                        _doPurchase(offId);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
