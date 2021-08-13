@@ -47,4 +47,47 @@ flutter run
 
 
 ## The Approach
-My approach begins with analyzing the project
+My approach begins with analyzing the project, with obviously first reading what I got sent.
+
+Then I began my creating a plan which looked like this:
+
+- Tasks in relation with the API
+  - Figure out GraphQL Queries
+  - Figure out how many Objects I had and their properties
+  - Figure out how the responses worked
+  - Figure out the Purchase Mutation so I could have purchases in the app
+  - Got cool little graphs thanks to a project called [GraphQL Voyager](https://github.com/APIs-guru/graphql-voyager), I used postman at first to do the introspection Query to figure out the entire tree but ended up moving to Insomnia like you guys reccomended because it was truly easier. I was able to query and make a Mutation which was all I needed to begin!
+
+
+<p float="left">
+    <img src="https://i.imgur.com/MQQT0ST.png" width="800" height="75%">
+    <img src="https://i.imgur.com/3Uk58wy.png" width="800" height="75%">
+    <img src="https://i.imgur.com/XEvtsUl.png" width="800" height="75%">
+    <img src="https://i.imgur.com/MQQT0ST.png" width="800" height="75%">
+    <img src="https://i.imgur.com/cjZvFUB.png" width="800" height="75%">
+</p>
+
+- Tasks in relation with the app itself
+  - Come up with an App Flow, How's the app going to work?
+  - Defined I wanted to do a Navigation Bottom Bar styled app (Like most mobile marketplaces apps)
+  - Drew some screens on paper (Image Below)
+  - Create my Flutter project
+  - Setup a Git Repository
+  - Install libraries I may need
+  - Create folders so I can have a well structured project
+  - Create my App Skeleton (Navigation controller and such with Navigation bar callbacks)
+  - Created my Data models (inside of lib/model) where I contain the products, offers and user data models
+  - Created my views (inside of lib/view) where I have everything related to the visual side of the app
+  - Created my Data models (inside of lib/controller) where I consume my queries and parse the data to the be used by my views
+  - Created my config (inside of lib/config) where I keep data such as the api url, token and queries
+  - Created my utilities (inside of lib/utils) where I keep misc functions that help me achieve stuff such as intializing my GraphQL Client, User Preferences and Json Utilites
+
+
+<p float="left">
+    <img src="https://i.imgur.com/Tvh6xoU.png" width="800" height="75%">
+    <img src="https://i.imgur.com/vpHK1fj.png" width="800" height="75%">
+</p>
+
+
+With all that now out of the way and planned I began by doing my implementation of the views 
+
