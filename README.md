@@ -89,5 +89,13 @@ Then I began my creating a plan which looked like this:
 </p>
 
 
-With all that now out of the way and planned I began by doing my implementation of the views 
+With all that now out of the way I want to talk about the libraries that I used and their purpose
 
+- [GraphQL](https://pub.dev/packages/graphql)
+  - This helped to consume the GraphQL Queries and Mutations
+- [Shared Preferences](https://pub.dev/packages/shared_preferences)
+  - This helped me to store the user and give continuity to it's balance because the API no matter what it gave me the same amount remaining of the balance even though I purchased the same product multiple times. So my approach was to save the data in the device and after each purchase decrease the amount with it'srespective value. I added a button to reset the demo data and I believe because of the way I initialize everything the data gets reset on every app restart (First Launching the app may take a little second to fetch for the first time)
+- [URL Launcherr](https://pub.dev/packages/url_launcher)
+  - This helped me to launch some web pages in the about section of the app 🙂
+
+With all this out of the way I hope you like my Code Challenge and if you have any questions feel free to reach me back! 🎉
