@@ -55,7 +55,7 @@ class _NuMarketViewState extends State<NuMarketView> {
                   future: requestUser(),
                   builder: (BuildContext context, AsyncSnapshot<Map> snapshot) {
                     List<Widget> children;
-                    if (snapshot.hasData) {
+                    if (snapshot.hasData && snapshot.data!['name'] != null) {
                       children = <Widget>[
                         Padding(
                           padding: EdgeInsets.all(10),
@@ -122,6 +122,11 @@ class _NuMarketViewState extends State<NuMarketView> {
                             ),
                           ),
                         )
+                      ];
+                    } else if (snapshot.hasError) {
+                      // show error widget
+                      children = <Widget>[
+                        Text(snapshot.error.toString()),
                       ];
                     } else {
                       children = const <Widget>[
