@@ -14,7 +14,7 @@ The app itself it's a Rick and Morty themed marketplace where  you can buy vario
 </p>
 
 The goal was to:
-- fetch the Customer data
+- Fetch the Customer data
   - Stuff like their name and balance
 - Offers they had including the products
   - Image, name, price, description
@@ -94,7 +94,7 @@ With all that now out of the way I want to talk about the libraries that I used 
 - [GraphQL](https://pub.dev/packages/graphql)
   - This helped to consume the GraphQL Queries and Mutations
 - [Shared Preferences](https://pub.dev/packages/shared_preferences)
-  - This helped me to store the user and give continuity to it's balance because the API no matter what it gave me the same amount remaining of the balance even though I purchased the same product multiple times. So my approach was to save the data in the device and after each purchase decrease the amount with it'srespective value. I added a button to reset the demo data and I believe because of the way I initialize everything the data gets reset on every app restart (First Launching the app may take a little second to fetch for the first time)
+  - This helped me to store the user and give continuity to it's balance because the API no matter what it gave me the same amount remaining of the balance even though I purchased the same product multiple times. So my approach to fix this was to save the data in the device and after each purchase decrease the amount with it'srespective value. I added a button to reset the demo data and I believe because of the way I initialize everything the data gets reset on every app restart.
 - [URL Launcherr](https://pub.dev/packages/url_launcher)
   - This helped me to launch some web pages in the about section of the app 🙂
 
