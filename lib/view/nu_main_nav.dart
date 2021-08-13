@@ -4,7 +4,6 @@ import 'package:nuconta_marketplace/controller/profile_data.dart';
 import 'package:nuconta_marketplace/model/user_data.dart';
 import 'package:nuconta_marketplace/utils/graph_ql_utils.dart';
 import 'package:nuconta_marketplace/utils/user_prefs_helper.dart';
-import 'package:nuconta_marketplace/view/about_me.dart';
 import 'package:nuconta_marketplace/view/nu_market_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
