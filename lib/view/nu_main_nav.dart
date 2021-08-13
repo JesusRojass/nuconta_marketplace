@@ -28,7 +28,9 @@ class _NuMainNavState extends State<NuMainNav> {
       setState(() {
         _userData.then((data) {
           print(data.toJson());
-          _saveUser(data);
+          _saveUser(data).whenComplete(() {
+            _getFutureData();
+          });
         });
       });
     });

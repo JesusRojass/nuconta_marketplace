@@ -20,9 +20,17 @@ class _NuMarketViewState extends State<NuMarketView> {
   @override
   void initState() {
     super.initState();
-    _data = _requestUser();
+    // This looks kind of sketchy, This part looks like this becuase on first app launch app wasnt able to get data
+    _requestUser().whenComplete(() {
+      setState(() {
+        _data = _requestUser();
+      });
+    });
+    //Get Offerrs Crrousel
     _getFutureOfferData().whenComplete(() {
-      setState(() {});
+      setState(() {
+        _data = _requestUser();
+      });
     });
   }
 
@@ -45,7 +53,7 @@ class _NuMarketViewState extends State<NuMarketView> {
                 ),
               ),
               FutureBuilder<Map>(
-                  future: _data,
+                  future: _requestUser(),
                   builder: (BuildContext context, AsyncSnapshot<Map> snapshot) {
                     List<Widget> children;
                     if (snapshot.hasData) {
@@ -320,6 +328,7 @@ class _NuMarketViewState extends State<NuMarketView> {
     );
   }
 
+  // This block shows the product details on a modal bottom sheet
   void _showModalBottomSheet(BuildContext context, String pName, String pDesc,
       int pPrice, String offId, String pImg) {
     showModalBottomSheet(
@@ -396,6 +405,7 @@ class _NuMarketViewState extends State<NuMarketView> {
     );
   }
 
+  // This will show the pop up when purchase is clicked and it's attepting it
   void _onLoading(bool pStat, String pMessage) {
     showDialog(
       context: context,
@@ -476,6 +486,7 @@ class _NuMarketViewState extends State<NuMarketView> {
     });
   }
 
+  // Calls the purchase method and recives purchase details data
   Future<PurchaseData> _doPurchase(String offerId) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -494,6 +505,7 @@ class _NuMarketViewState extends State<NuMarketView> {
     return _purchaseData;
   }
 
+  // Gets Offerrs
   Future<RootOfferTree> _getFutureOfferData() async {
     setState(() {
       initializeGQL().then((client) => {_offerData = fetchOfferData(client)});
@@ -501,6 +513,7 @@ class _NuMarketViewState extends State<NuMarketView> {
     return _offerData;
   }
 
+  // Gets User from shared preferences
   Future<Map> _requestUser() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nuconta_marketplace/utils/user_prefs_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nuconta_marketplace/controller/profile_data.dart';
 import 'package:nuconta_marketplace/model/user_data.dart';
@@ -15,7 +16,7 @@ class _NuProfileViewState extends State<NuProfileView> {
   @override
   void initState() {
     super.initState();
-    _data = _requestUser();
+    _data = requestUser();
   }
 
   @override
@@ -125,14 +126,5 @@ class _NuProfileViewState extends State<NuProfileView> {
         ),
       ),
     );
-  }
-
-  Future<Map> _requestUser() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return {
-      "id": prefs.getString('id'),
-      "name": prefs.getString('name'),
-      "balance": prefs.getInt('balance'),
-    };
   }
 }
