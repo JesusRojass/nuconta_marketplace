@@ -77,7 +77,7 @@ class _NuMainNavState extends State<NuMainNav> {
 
   void handleClick(String value) {
     switch (value) {
-      case 'Reset':
+      case 'Reset Demo':
         _initializeUserInApp();
         break;
     }
