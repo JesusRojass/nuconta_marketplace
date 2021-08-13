@@ -4,6 +4,7 @@ import 'package:nuconta_marketplace/controller/purchase_controller.dart';
 import 'package:nuconta_marketplace/model/offer_data.dart';
 import 'package:nuconta_marketplace/model/purchase_data.dart';
 import 'package:nuconta_marketplace/utils/graph_ql_utils.dart';
+import 'package:nuconta_marketplace/utils/user_prefs_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NuOfferView extends StatefulWidget {
@@ -217,7 +218,8 @@ class _NuOfferViewState extends State<NuOfferView> {
                         ),
                       ),
                       onPressed: () {
-                        _doPurchase(offId);
+                        _doPurchase(offId, pPrice);
+                        Navigator.pop(context);
                       },
                     ),
                   ),
@@ -317,20 +319,30 @@ class _NuOfferViewState extends State<NuOfferView> {
     });
   }
 
-  Future<PurchaseData> _doPurchase(String offerId) async {
+  Future<PurchaseData> _doPurchase(String offerId, int oPrice) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      initializeGQL().then((client) {
-        _purchaseData = commitPurchase(client, offerId);
-        _purchaseData.then((value) async {
-          if (value.errorMessage == null) {
-            await prefs.setInt('balance', value.customer.balance);
-            _onLoading(value.success, 'Purchase Complete!');
-          } else {
-            _onLoading(value.success, value.errorMessage);
-          }
-        });
+      requestUser().then((data) {
+        // print(data['balance'].toString());
+        if (oPrice > data['balance']) {
+          _onLoading(false, 'You don\'t have that much money.');
+        } else {
+          initializeGQL().then((client) {
+            _purchaseData = commitPurchase(client, offerId);
+            _purchaseData.then((value) async {
+              if (value.errorMessage == null) {
+                //This will decrease the balance insted of taking the one from the response which is always the same regardless how much you buy
+                await prefs.setInt('balance', data['balance'] - oPrice);
+                _onLoading(value.success, 'Purchase Complete!');
+              } else {
+                _onLoading(value.success, value.errorMessage);
+              }
+            });
+          });
+        }
       });
+
+      requestUser();
     });
     return _purchaseData;
   }

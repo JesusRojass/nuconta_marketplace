@@ -29,9 +29,7 @@ class _NuMarketViewState extends State<NuMarketView> {
     });
     //Get Offerrs Crrousel
     _getFutureOfferData().whenComplete(() {
-      setState(() {
-        _data = requestUser();
-      });
+      setState(() {});
     });
   }
 
@@ -393,7 +391,8 @@ class _NuMarketViewState extends State<NuMarketView> {
                         ),
                       ),
                       onPressed: () {
-                        _doPurchase(offId);
+                        _doPurchase(offId, pPrice);
+                        Navigator.pop(context);
                       },
                     ),
                   ),
@@ -476,6 +475,11 @@ class _NuMarketViewState extends State<NuMarketView> {
                     ),
                     onPressed: () {
                       Navigator.pop(context);
+                      requestUser().whenComplete(() {
+                        setState(() {
+                          _data = requestUser();
+                        });
+                      });
                     },
                   ),
                 ],
@@ -488,20 +492,30 @@ class _NuMarketViewState extends State<NuMarketView> {
   }
 
   // Calls the purchase method and recives purchase details data
-  Future<PurchaseData> _doPurchase(String offerId) async {
+  Future<PurchaseData> _doPurchase(String offerId, int oPrice) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      initializeGQL().then((client) {
-        _purchaseData = commitPurchase(client, offerId);
-        _purchaseData.then((value) async {
-          if (value.errorMessage == null) {
-            await prefs.setInt('balance', value.customer.balance);
-            _onLoading(value.success, 'Purchase Complete!');
-          } else {
-            _onLoading(value.success, value.errorMessage);
-          }
-        });
+      requestUser().then((data) {
+        // print(data['balance'].toString());
+        if (oPrice > data['balance']) {
+          _onLoading(false, 'You don\'t have that much money.');
+        } else {
+          initializeGQL().then((client) {
+            _purchaseData = commitPurchase(client, offerId);
+            _purchaseData.then((value) async {
+              if (value.errorMessage == null) {
+                //This will decrease the balance insted of taking the one from the response which is always the same regardless how much you buy
+                await prefs.setInt('balance', data['balance'] - oPrice);
+                _onLoading(value.success, 'Purchase Complete!');
+              } else {
+                _onLoading(value.success, value.errorMessage);
+              }
+            });
+          });
+        }
       });
+
+      requestUser();
     });
     return _purchaseData;
   }
