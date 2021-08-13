@@ -47,7 +47,7 @@ class _NuMainNavState extends State<NuMainNav> {
           PopupMenuButton<String>(
             onSelected: handleClick,
             itemBuilder: (BuildContext context) {
-              return {'Reset', 'About'}.map((String choice) {
+              return {'Reset Demo'}.map((String choice) {
                 return PopupMenuItem<String>(
                   value: choice,
                   child: Text(choice),
@@ -80,12 +80,6 @@ class _NuMainNavState extends State<NuMainNav> {
     switch (value) {
       case 'Reset':
         _initializeUserInApp();
-        break;
-      case 'About':
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => AboutMe()),
-        );
         break;
     }
   }
