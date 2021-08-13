@@ -15,7 +15,7 @@ Future<User> fetchUserData(GraphQLClient _client) async {
   } else {
     final userResponse =
         getPrettyJSONString(result.data!['viewer'].cast<String, dynamic>());
-    print(userResponse);
+    // print(userResponse);
     return User.fromJson(jsonDecode(userResponse));
   }
 }

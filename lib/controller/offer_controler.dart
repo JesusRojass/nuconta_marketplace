@@ -16,7 +16,7 @@ Future<RootOfferTree> fetchOfferData(GraphQLClient _client) async {
   } else {
     final offerResponse =
         getPrettyJSONString(result.data!['viewer'].cast<String, dynamic>());
-    print(offerResponse);
+    // print(offerResponse);
     return RootOfferTree.fromJson(jsonDecode(offerResponse));
   }
 }

@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:graphql/client.dart';
+
 import 'product_data.dart';
 
 RootOfferTree offdataFromJson(String str) =>
@@ -32,18 +34,21 @@ class RootOfferTree {
 }
 
 class Offer {
+  String typename;
+  String id;
+  Product product;
+  int price;
+
   Offer({
     required this.typename,
+    required this.id,
     required this.product,
     required this.price,
   });
 
-  String typename;
-  Product product;
-  int price;
-
   factory Offer.fromJson(Map<String, dynamic> json) => Offer(
         typename: json["__typename"],
+        id: json["id"],
         product: Product.fromJson(json["product"]),
         price: json["price"],
       );

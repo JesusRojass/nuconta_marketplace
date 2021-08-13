@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nuconta_marketplace/controller/offer_controler.dart';
 import 'package:nuconta_marketplace/controller/profile_data.dart';
+import 'package:nuconta_marketplace/controller/purchase_controller.dart';
 import 'package:nuconta_marketplace/model/offer_data.dart';
 import 'package:nuconta_marketplace/model/user_data.dart';
 import 'package:nuconta_marketplace/utils/graph_ql_utils.dart';
@@ -241,7 +242,12 @@ class _NuMarketViewState extends State<NuMarketView> {
                                                         ),
                                                       ),
                                                     ),
-                                                    onPressed: () => null)
+                                                    onPressed: () {
+                                                      print(snapshot.data!
+                                                          .offers[index].id);
+                                                      _doPurchase(snapshot.data!
+                                                          .offers[index].id);
+                                                    })
                                               ],
                                             ),
                                           ),
@@ -281,6 +287,12 @@ class _NuMarketViewState extends State<NuMarketView> {
         ),
       ),
     );
+  }
+
+  Future<void> _doPurchase(String offerId) async {
+    setState(() {
+      initializeGQL().then((client) => {commitPurchase(client, offerId)});
+    });
   }
 
   Future<User> _getFutureData() async {
