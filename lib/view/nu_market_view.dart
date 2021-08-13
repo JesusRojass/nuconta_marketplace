@@ -443,11 +443,13 @@ class _NuMarketViewState extends State<NuMarketView> {
                         : Icon(Icons.remove_circle),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(top: 10, bottom: 15),
+                    padding: EdgeInsets.only(
+                        top: 10, bottom: 15, left: 20, right: 20),
                     child: Text(
                       pMessage,
                       style:
                           TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                   ElevatedButton(
