@@ -24,7 +24,8 @@ class PurchaseData {
 
   factory PurchaseData.fromJson(Map<String, dynamic> json) => PurchaseData(
         success: json["success"],
-        errorMessage: json["errorMessage"],
+        errorMessage:
+            json["errorMessage"] == null ? null : json["errorMessage"],
         customer: User.fromJson(json["customer"]),
       );
 

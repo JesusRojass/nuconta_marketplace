@@ -32,6 +32,7 @@ class Queries {
       success
       errorMessage
       customer {
+        id
         name
         balance
       }

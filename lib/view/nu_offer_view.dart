@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nuconta_marketplace/controller/offer_controler.dart';
+import 'package:nuconta_marketplace/controller/purchase_controller.dart';
 import 'package:nuconta_marketplace/model/offer_data.dart';
+import 'package:nuconta_marketplace/model/purchase_data.dart';
 import 'package:nuconta_marketplace/utils/graph_ql_utils.dart';
 
 class NuOfferView extends StatefulWidget {
@@ -10,6 +12,7 @@ class NuOfferView extends StatefulWidget {
 
 class _NuOfferViewState extends State<NuOfferView> {
   late Future<RootOfferTree> _offerData;
+  late Future<PurchaseData> _purchaseData;
   @override
   void initState() {
     super.initState();
@@ -96,7 +99,12 @@ class _NuOfferViewState extends State<NuOfferView> {
                                               ),
                                             ),
                                           ),
-                                          onPressed: () => null)
+                                          onPressed: () {
+                                            print(snapshot
+                                                .data!.offers[index].id);
+                                            _doPurchase(snapshot
+                                                .data!.offers[index].id);
+                                          })
                                     ],
                                   ),
                                 ),
@@ -138,5 +146,13 @@ class _NuOfferViewState extends State<NuOfferView> {
       initializeGQL().then((client) => {_offerData = fetchOfferData(client)});
     });
     return _offerData;
+  }
+
+  Future<PurchaseData> _doPurchase(String offerId) async {
+    setState(() {
+      initializeGQL()
+          .then((client) => {_purchaseData = commitPurchase(client, offerId)});
+    });
+    return _purchaseData;
   }
 }

@@ -3,6 +3,7 @@ import 'package:nuconta_marketplace/controller/offer_controler.dart';
 import 'package:nuconta_marketplace/controller/profile_data.dart';
 import 'package:nuconta_marketplace/controller/purchase_controller.dart';
 import 'package:nuconta_marketplace/model/offer_data.dart';
+import 'package:nuconta_marketplace/model/purchase_data.dart';
 import 'package:nuconta_marketplace/model/user_data.dart';
 import 'package:nuconta_marketplace/utils/graph_ql_utils.dart';
 
@@ -14,6 +15,7 @@ class NuMarketView extends StatefulWidget {
 class _NuMarketViewState extends State<NuMarketView> {
   late Future<User> _userData;
   late Future<RootOfferTree> _offerData;
+  late Future<PurchaseData> _purchaseData;
   @override
   void initState() {
     super.initState();
@@ -289,10 +291,12 @@ class _NuMarketViewState extends State<NuMarketView> {
     );
   }
 
-  Future<void> _doPurchase(String offerId) async {
+  Future<PurchaseData> _doPurchase(String offerId) async {
     setState(() {
-      initializeGQL().then((client) => {commitPurchase(client, offerId)});
+      initializeGQL()
+          .then((client) => {_purchaseData = commitPurchase(client, offerId)});
     });
+    return _purchaseData;
   }
 
   Future<User> _getFutureData() async {
