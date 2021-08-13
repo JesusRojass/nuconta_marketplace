@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:nuconta_marketplace/controller/profile_data.dart';
 import 'package:nuconta_marketplace/model/user_data.dart';
 import 'package:nuconta_marketplace/utils/graph_ql_utils.dart';
+import 'package:nuconta_marketplace/utils/user_prefs_helper.dart';
+import 'package:nuconta_marketplace/view/about_me.dart';
 import 'package:nuconta_marketplace/view/nu_market_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -28,7 +30,7 @@ class _NuMainNavState extends State<NuMainNav> {
       setState(() {
         _userData.then((data) {
           print(data.toJson());
-          _saveUser(data).whenComplete(() {
+          saveUser(data).whenComplete(() {
             _getFutureData();
           });
         });
@@ -41,6 +43,19 @@ class _NuMainNavState extends State<NuMainNav> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_titles[_currentIndex]),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: handleClick,
+            itemBuilder: (BuildContext context) {
+              return {'Reset', 'About'}.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
+            },
+          ),
+        ],
       ),
       bottomNavigationBar: BottomMenuBar(_menuCallback, _currentIndex),
       body: SafeArea(child: _callPage(this._currentIndex)),
@@ -61,19 +76,38 @@ class _NuMainNavState extends State<NuMainNav> {
     }
   }
 
+  void handleClick(String value) {
+    switch (value) {
+      case 'Reset':
+        _initializeUserInApp();
+        break;
+      case 'About':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => AboutMe()),
+        );
+        break;
+    }
+  }
+
+  void _initializeUserInApp() {
+    _getFutureData().whenComplete(() {
+      setState(() {
+        _userData.then((data) {
+          print(data.toJson());
+          saveUser(data).whenComplete(() {
+            _getFutureData();
+          });
+        });
+      });
+    });
+  }
+
   // This handles bottom nav bar clicks
   void _menuCallback(int selectedIndex) {
     setState(() {
       this._currentIndex = selectedIndex;
     });
-  }
-
-  Future<Null> _saveUser(User user) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    prefs.setString('id', user.id);
-    prefs.setString('name', user.name);
-    prefs.setInt('balance', user.balance);
   }
 
   Future<User> _getFutureData() async {

@@ -6,6 +6,7 @@ import 'package:nuconta_marketplace/model/offer_data.dart';
 import 'package:nuconta_marketplace/model/purchase_data.dart';
 import 'package:nuconta_marketplace/model/user_data.dart';
 import 'package:nuconta_marketplace/utils/graph_ql_utils.dart';
+import 'package:nuconta_marketplace/utils/user_prefs_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NuMarketView extends StatefulWidget {
@@ -21,15 +22,15 @@ class _NuMarketViewState extends State<NuMarketView> {
   void initState() {
     super.initState();
     // This looks kind of sketchy, This part looks like this becuase on first app launch app wasnt able to get data
-    _requestUser().whenComplete(() {
+    requestUser().whenComplete(() {
       setState(() {
-        _data = _requestUser();
+        _data = requestUser();
       });
     });
     //Get Offerrs Crrousel
     _getFutureOfferData().whenComplete(() {
       setState(() {
-        _data = _requestUser();
+        _data = requestUser();
       });
     });
   }
@@ -53,7 +54,7 @@ class _NuMarketViewState extends State<NuMarketView> {
                 ),
               ),
               FutureBuilder<Map>(
-                  future: _requestUser(),
+                  future: requestUser(),
                   builder: (BuildContext context, AsyncSnapshot<Map> snapshot) {
                     List<Widget> children;
                     if (snapshot.hasData) {
@@ -70,8 +71,8 @@ class _NuMarketViewState extends State<NuMarketView> {
                                     children: [
                                       CircleAvatar(
                                         radius: 25,
-                                        backgroundImage: NetworkImage(
-                                            'https://www.medtalks.es/images/user-placeholder.jpg'),
+                                        backgroundImage: AssetImage(
+                                            'assets/img/jerry_smith.jpg'),
                                       ),
                                       Padding(
                                           padding: EdgeInsets.only(left: 10)),
@@ -511,15 +512,5 @@ class _NuMarketViewState extends State<NuMarketView> {
       initializeGQL().then((client) => {_offerData = fetchOfferData(client)});
     });
     return _offerData;
-  }
-
-  // Gets User from shared preferences
-  Future<Map> _requestUser() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return {
-      "id": prefs.getString('id'),
-      "name": prefs.getString('name'),
-      "balance": prefs.getInt('balance'),
-    };
   }
 }

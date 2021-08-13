@@ -44,8 +44,8 @@ class _NuProfileViewState extends State<NuProfileView> {
                                     children: [
                                       CircleAvatar(
                                         radius: 25,
-                                        backgroundImage: NetworkImage(
-                                            'https://www.medtalks.es/images/user-placeholder.jpg'),
+                                        backgroundImage: AssetImage(
+                                            'assets/img/jerry_smith.jpg'),
                                       ),
                                       Padding(
                                           padding: EdgeInsets.only(left: 10)),
