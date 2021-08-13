@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nuconta_marketplace/controller/profile_data.dart';
 import 'package:nuconta_marketplace/model/user_data.dart';
 import 'package:nuconta_marketplace/utils/graph_ql_utils.dart';
@@ -10,12 +11,11 @@ class NuProfileView extends StatefulWidget {
 
 class _NuProfileViewState extends State<NuProfileView> {
   late Future<User> _userData;
+  late Future<Map> _data;
   @override
   void initState() {
     super.initState();
-    _getFutureData().whenComplete(() {
-      setState(() {});
-    });
+    _data = _requestUser();
   }
 
   @override
@@ -25,10 +25,9 @@ class _NuProfileViewState extends State<NuProfileView> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              FutureBuilder<User>(
-                  future: _getFutureData(),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<User> snapshot) {
+              FutureBuilder<Map>(
+                  future: _data,
+                  builder: (BuildContext context, AsyncSnapshot<Map> snapshot) {
                     List<Widget> children;
                     if (snapshot.hasData) {
                       children = <Widget>[
@@ -50,7 +49,7 @@ class _NuProfileViewState extends State<NuProfileView> {
                                       Padding(
                                           padding: EdgeInsets.only(left: 10)),
                                       Text(
-                                        snapshot.data!.name + '!',
+                                        snapshot.data!['name'],
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 24),
@@ -82,7 +81,7 @@ class _NuProfileViewState extends State<NuProfileView> {
                                                   EdgeInsets.only(bottom: 10)),
                                           Text(
                                             '\$' +
-                                                snapshot.data!.balance
+                                                snapshot.data!['balance']
                                                     .toString(),
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
@@ -98,6 +97,8 @@ class _NuProfileViewState extends State<NuProfileView> {
                           ),
                         )
                       ];
+                    } else if (snapshot.hasError) {
+                      children = <Widget>[Text(snapshot.error.toString())];
                     } else {
                       children = const <Widget>[
                         SizedBox(
@@ -126,10 +127,12 @@ class _NuProfileViewState extends State<NuProfileView> {
     );
   }
 
-  Future<User> _getFutureData() async {
-    setState(() {
-      initializeGQL().then((client) => {_userData = fetchUserData(client)});
-    });
-    return _userData;
+  Future<Map> _requestUser() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return {
+      "id": prefs.getString('id'),
+      "name": prefs.getString('name'),
+      "balance": prefs.getInt('balance'),
+    };
   }
 }

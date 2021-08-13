@@ -1,6 +1,10 @@
 // Libs
 import 'package:flutter/material.dart';
+import 'package:nuconta_marketplace/controller/profile_data.dart';
+import 'package:nuconta_marketplace/model/user_data.dart';
+import 'package:nuconta_marketplace/utils/graph_ql_utils.dart';
 import 'package:nuconta_marketplace/view/nu_market_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Views
 import 'bottom_menu.dart';
@@ -14,7 +18,22 @@ class NuMainNav extends StatefulWidget {
 
 class _NuMainNavState extends State<NuMainNav> {
   int _currentIndex = 0;
+  late Future<User> _userData;
   List<String> _titles = ['Home', 'Offers', 'Profile'];
+
+  @override
+  void initState() {
+    super.initState();
+    _getFutureData().whenComplete(() {
+      setState(() {
+        _userData.then((data) {
+          print(data.toJson());
+          _saveUser(data);
+        });
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,6 +65,19 @@ class _NuMainNavState extends State<NuMainNav> {
       this._currentIndex = selectedIndex;
     });
   }
-}
 
-class NuOfferrView {}
+  Future<Null> _saveUser(User user) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.setString('id', user.id);
+    prefs.setString('name', user.name);
+    prefs.setInt('balance', user.balance);
+  }
+
+  Future<User> _getFutureData() async {
+    setState(() {
+      initializeGQL().then((client) => {_userData = fetchUserData(client)});
+    });
+    return _userData;
+  }
+}

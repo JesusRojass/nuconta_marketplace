@@ -6,6 +6,7 @@ import 'package:nuconta_marketplace/model/offer_data.dart';
 import 'package:nuconta_marketplace/model/purchase_data.dart';
 import 'package:nuconta_marketplace/model/user_data.dart';
 import 'package:nuconta_marketplace/utils/graph_ql_utils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NuMarketView extends StatefulWidget {
   @override
@@ -13,15 +14,13 @@ class NuMarketView extends StatefulWidget {
 }
 
 class _NuMarketViewState extends State<NuMarketView> {
-  late Future<User> _userData;
+  late Future<Map> _data;
   late Future<RootOfferTree> _offerData;
   late Future<PurchaseData> _purchaseData;
   @override
   void initState() {
     super.initState();
-    _getFutureData().whenComplete(() {
-      setState(() {});
-    });
+    _data = _requestUser();
     _getFutureOfferData().whenComplete(() {
       setState(() {});
     });
@@ -45,10 +44,9 @@ class _NuMarketViewState extends State<NuMarketView> {
                   ),
                 ),
               ),
-              FutureBuilder<User>(
-                  future: _getFutureData(),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<User> snapshot) {
+              FutureBuilder<Map>(
+                  future: _data,
+                  builder: (BuildContext context, AsyncSnapshot<Map> snapshot) {
                     List<Widget> children;
                     if (snapshot.hasData) {
                       children = <Widget>[
@@ -70,7 +68,7 @@ class _NuMarketViewState extends State<NuMarketView> {
                                       Padding(
                                           padding: EdgeInsets.only(left: 10)),
                                       Text(
-                                        snapshot.data!.name + '!',
+                                        snapshot.data!['name'],
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 24),
@@ -102,7 +100,7 @@ class _NuMarketViewState extends State<NuMarketView> {
                                                   EdgeInsets.only(bottom: 10)),
                                           Text(
                                             '\$' +
-                                                snapshot.data!.balance
+                                                snapshot.data!['balance']
                                                     .toString(),
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
@@ -479,11 +477,13 @@ class _NuMarketViewState extends State<NuMarketView> {
   }
 
   Future<PurchaseData> _doPurchase(String offerId) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       initializeGQL().then((client) {
         _purchaseData = commitPurchase(client, offerId);
-        _purchaseData.then((value) {
+        _purchaseData.then((value) async {
           if (value.errorMessage == null) {
+            await prefs.setInt('balance', value.customer.balance);
             _onLoading(value.success, 'Purchase Complete!');
           } else {
             _onLoading(value.success, value.errorMessage);
@@ -494,17 +494,19 @@ class _NuMarketViewState extends State<NuMarketView> {
     return _purchaseData;
   }
 
-  Future<User> _getFutureData() async {
-    setState(() {
-      initializeGQL().then((client) => {_userData = fetchUserData(client)});
-    });
-    return _userData;
-  }
-
   Future<RootOfferTree> _getFutureOfferData() async {
     setState(() {
       initializeGQL().then((client) => {_offerData = fetchOfferData(client)});
     });
     return _offerData;
+  }
+
+  Future<Map> _requestUser() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return {
+      "id": prefs.getString('id'),
+      "name": prefs.getString('name'),
+      "balance": prefs.getInt('balance'),
+    };
   }
 }

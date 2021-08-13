@@ -4,6 +4,7 @@ import 'package:nuconta_marketplace/controller/purchase_controller.dart';
 import 'package:nuconta_marketplace/model/offer_data.dart';
 import 'package:nuconta_marketplace/model/purchase_data.dart';
 import 'package:nuconta_marketplace/utils/graph_ql_utils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NuOfferView extends StatefulWidget {
   @override
@@ -317,11 +318,13 @@ class _NuOfferViewState extends State<NuOfferView> {
   }
 
   Future<PurchaseData> _doPurchase(String offerId) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       initializeGQL().then((client) {
         _purchaseData = commitPurchase(client, offerId);
-        _purchaseData.then((value) {
+        _purchaseData.then((value) async {
           if (value.errorMessage == null) {
+            await prefs.setInt('balance', value.customer.balance);
             _onLoading(value.success, 'Purchase Complete!');
           } else {
             _onLoading(value.success, value.errorMessage);
